@@ -1,8 +1,8 @@
+# What is this repo?
+This is basically the answers to the wonderful GPU Puzzlers repo by Sasha Rush above, all credit goes to him. The reason this repo was created was mainly because in Eleuther AI we were given this repo as an introduction to triton and I had a lot of fun going through it.
+
 # GPU Puzzles
 - by [Sasha Rush](http://rush-nlp.com) - [srush_nlp](https://twitter.com/srush_nlp)
-
-## What is this repo?
-This is basically the answers to the wonderful GPU Puzzlers repo by Sasha Rush above, all credit goes to him. The reason this repo was created was mainly because in Eleuther AI we were given this repo as an introduction to triton and it went from there!
 
 ![](https://github.com/srush/GPU-Puzzles/raw/main/cuda.png)
 
@@ -78,8 +78,9 @@ def map_spec(a):
 
 def map_test(cuda):
     def call(out, a) -> None:
-        local_i = cuda.threadIdx.x
-        # FILL ME IN (roughly 1 lines)
+                local_i = cuda.threadIdx.x
+        out[local_i] = a[local_i] +10
+
 
     return call
 
@@ -94,11 +95,11 @@ problem.show()
 ```
 
     # Map
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
     
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             0 |             0 | 
+
 
 
 
@@ -115,9 +116,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0.]
-    Spec : [10 11 12 13]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 2 - Zip
@@ -135,6 +135,7 @@ def zip_test(cuda):
     def call(out, a, b) -> None:
         local_i = cuda.threadIdx.x
         # FILL ME IN (roughly 1 lines)
+        out[local_i] = a[local_i] + b[local_i]
 
     return call
 
@@ -150,10 +151,10 @@ problem.show()
 ```
 
     # Zip
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             2 |             1 |             0 |             0 | 
     
 
 
@@ -176,9 +177,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0.]
-    Spec : [0 2 4 6]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 3 - Guards
@@ -192,6 +192,8 @@ def map_guard_test(cuda):
     def call(out, a, size) -> None:
         local_i = cuda.threadIdx.x
         # FILL ME IN (roughly 2 lines)
+        if local_i < SIZE:
+          out[local_i] = a[local_i] + 10
 
     return call
 
@@ -212,10 +214,10 @@ problem.show()
 ```
 
     # Guard
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+    
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             0 |             0 | 
     
 
 
@@ -233,9 +235,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0.]
-    Spec : [10 11 12 13]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 4 - Map 2D
@@ -251,6 +252,9 @@ def map_2D_test(cuda):
         local_j = cuda.threadIdx.y
         # FILL ME IN (roughly 2 lines)
 
+        if local_i < SIZE and local_j < SIZE:
+          out[local_i, local_j] = a[local_i, local_j]+10
+
     return call
 
 
@@ -264,11 +268,10 @@ problem.show()
 ```
 
     # Map 2D
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
     
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             0 |             0 | 
 
 
 
@@ -285,11 +288,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [[0. 0.]
-     [0. 0.]]
-    Spec : [[10 11]
-     [12 13]]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 5 - Broadcast
@@ -304,6 +304,8 @@ def broadcast_test(cuda):
         local_i = cuda.threadIdx.x
         local_j = cuda.threadIdx.y
         # FILL ME IN (roughly 2 lines)
+        if local_i < size and local_j < size:
+          out[local_i,local_j] = a[local_i,0] + b[0,local_j]
 
     return call
 
@@ -325,10 +327,10 @@ problem.show()
 ```
 
     # Broadcast
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+ 
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             2 |             1 |             0 |             0 | 
     
 
 
@@ -346,11 +348,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [[0. 0.]
-     [0. 0.]]
-    Spec : [[0 1]
-     [1 2]]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 6 - Blocks
@@ -367,7 +366,8 @@ def map_block_test(cuda):
     def call(out, a, size) -> None:
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         # FILL ME IN (roughly 2 lines)
-
+        if i < size:
+          out[i] = a[i] + 10
     return call
 
 
@@ -387,12 +387,12 @@ problem = CudaProblem(
 problem.show()
 ```
 
-    # Blocks
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
     
+    # Blocks
+    
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             0 |             0 | 
 
 
 
@@ -409,9 +409,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0. 0. 0. 0. 0. 0.]
-    Spec : [10 11 12 13 14 15 16 17 18]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 7 - Blocks 2D
@@ -424,7 +423,10 @@ than the size of `a` in both directions.
 def map_block2D_test(cuda):
     def call(out, a, size) -> None:
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+        j = cuda.blockIdx.y * cuda.blockDim.y + cuda.threadIdx.y
         # FILL ME IN (roughly 4 lines)
+        if i < size and j < size:
+          out[i, j] = a[i, j] + 10
 
     return call
 
@@ -447,10 +449,10 @@ problem.show()
 ```
 
     # Blocks 2D
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+ 
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             0 |             0 | 
     
 
 
@@ -468,17 +470,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [[0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0.]]
-    Spec : [[11. 11. 11. 11. 11.]
-     [11. 11. 11. 11. 11.]
-     [11. 11. 11. 11. 11.]
-     [11. 11. 11. 11. 11.]
-     [11. 11. 11. 11. 11.]]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 8 - Shared
@@ -506,6 +499,7 @@ def shared_test(cuda):
         if i < size:
             shared[local_i] = a[i]
             cuda.syncthreads()
+            out[i] = shared[local_i]+10
 
         # FILL ME IN (roughly 2 lines)
 
@@ -529,11 +523,10 @@ problem.show()
 ```
 
     # Shared
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             1 |             0 |             0 |             1 | 
-    
+ 
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             1 |             1 | 
 
 
 
@@ -550,9 +543,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0. 0. 0. 0. 0.]
-    Spec : [11. 11. 11. 11. 11. 11. 11. 11.]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 9 - Pooling
@@ -578,7 +570,15 @@ def pool_test(cuda):
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         local_i = cuda.threadIdx.x
         # FILL ME IN (roughly 8 lines)
+        shared[i] = a[i]
+        cuda.syncthreads()
+        a = shared[i]
+        if i > 0:
+            a = a + shared[i-1]
+        if i > 1:
+            a = a + shared[i-2]
 
+        out[i] = a
     return call
 
 
@@ -599,11 +599,10 @@ problem.show()
 ```
 
     # Pooling
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
     
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             3 |             1 | 
 
 
 
@@ -620,9 +619,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0. 0. 0. 0. 0.]
-    Spec : [ 0.  1.  3.  6.  9. 12. 15. 18.]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 10 - Dot Product
@@ -646,6 +644,14 @@ def dot_test(cuda):
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         local_i = cuda.threadIdx.x
         # FILL ME IN (roughly 9 lines)
+        if i < size:
+          shared[i] = a[i]*b[i]
+          cuda.syncthreads()
+          for j in range(TPB-1):
+            shared[TPB-1] = shared[TPB-1]+shared[j]
+            cuda.syncthreads()
+
+          out[0] = shared[TPB-1]
     return call
 
 
@@ -667,10 +673,10 @@ problem.show()
 ```
 
     # Dot
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+    
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             2 |             1 |            15 |             8 |
     
 
 
@@ -688,9 +694,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0.]
-    Spec : 140
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 11 - 1D Convolution
@@ -715,8 +720,30 @@ def conv_test(cuda):
     def call(out, a, b, a_size, b_size) -> None:
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         local_i = cuda.threadIdx.x
+        shared = cuda.shared.array(TPB_FULL_SIZE, numba.float32)
+        # save kernel in cache
+        if i < a_size:
+          if local_i < b_size:
+            shared[TPB+local_i] = b[local_i]
+          elif local_i-b_size < b_size-1 and (cuda.blockIdx.x+1) * cuda.blockDim.x < a_size:
+            # otherwise load next block into the last part of shared memory
+            # (cuda.blockIdx.x+1) * cuda.blockDim.x+local_i maps current index to the next block
+            # then we want to get to the convolution index
+            shared[TPB_MAX_CONV+local_i-b_size] = a[(cuda.blockIdx.x+1) * cuda.blockDim.x+local_i-b_size]
+          shared[local_i] = a[i]
+          cuda.syncthreads()
+          # do convolution to get all elements that will be in current index
+          # idea=> if we get a[i]*b[0] in shared[i] then we won't need either a[i] or b[0] anymore for current thread
+          # Thanks https://github.com/srush/GPU-Puzzles/issues/17 I learned I can use local variables haha
+          s = 0
+          for j in range(b_size):
+              if local_i + j < TPB:
+                # if within the block, deal with it normally
+                s += shared[local_i + j] * shared[j + TPB]
+              elif i+j<a_size:
+                s += shared[local_i+j-TPB+TPB_MAX_CONV]* shared[j + TPB]
 
-        # FILL ME IN (roughly 17 lines)
+          out[i] = s
 
     return call
 
@@ -742,11 +769,10 @@ problem.show()
 ```
 
     # 1D Conv (Simple)
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
-    
+ 
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             2 |             1 |             6 |             2 | 
 
 
 
@@ -763,9 +789,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0. 0. 0.]
-    Spec : [ 5.  8. 11. 14.  5.  0.]
+    Passed Tests!
+    <dog_gif>
 
 
 Test 2
@@ -789,10 +814,10 @@ problem.show()
 ```
 
     # 1D Conv (Full)
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+ 
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             2 |             1 |             8 |             2 |  
     
 
 
@@ -810,9 +835,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
-    Spec : [14. 20. 26. 32. 38. 44. 50. 56. 62. 68. 74. 80. 41. 14.  0.]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 12 - Prefix Sum
@@ -839,10 +863,41 @@ def sum_spec(a):
 
 def sum_test(cuda):
     def call(out, a, size: int) -> None:
-        cache = cuda.shared.array(TPB, numba.float32)
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
-        local_i = cuda.threadIdx.x
-        # FILL ME IN (roughly 12 lines)
+        last_block_idx = size//TPB
+        if size % TPB == 0:
+            last_block_idx-=1
+        if i < size:
+            local_i = cuda.threadIdx.x
+            cache = cuda.shared.array(TPB, numba.float32)
+            
+            local_i = cuda.threadIdx.x
+            # FILL ME IN (roughly 12 lines)
+            cache[local_i] = a[i]
+            cuda.syncthreads()
+            
+            for layer in range(1, NUM_LOOPS+1):
+                if local_i % 2**layer == 2**layer-1:
+                    cache[local_i] = cache[local_i]+cache[local_i-2**(layer-1)]
+                cuda.syncthreads()
+            output = 0
+            
+            if last_block_idx == cuda.blockIdx.x:
+                """
+                The below is for the case where size isn't at the 
+                
+                """
+                out_idx = 0
+                for layer in range(NUM_LOOPS, -1, -1):
+                    if size % 2**layer == 0:
+                        output += cache[out_idx+2**layer-1]
+                        break
+                    elif (((size-1) % TPB) +1) > 2**layer and (size % 2**(layer+1)) > 2**layer:
+                        output += cache[out_idx+2**layer-1]
+                        out_idx += 2**layer
+            else:
+                output = cache[TPB-1]
+            out[cuda.blockIdx.x] = output
 
     return call
 
@@ -866,10 +921,10 @@ problem.show()
 ```
 
     # Sum (Simple)
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+    
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             7 |             4 | 
     
 
 
@@ -887,9 +942,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0.]
-    Spec : [28.]
+    Passed Tests!
+    <dog_gif>
 
 
 Test 2
@@ -913,11 +967,11 @@ problem.show()
 ```
 
     # Sum (Full)
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
     
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             1 |             1 |             7 |             4 | 
+        
 
 
 
@@ -934,9 +988,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [0. 0.]
-    Spec : [28. 77.]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 13 - Axis Sum
@@ -958,8 +1011,15 @@ def axis_sum_test(cuda):
         cache = cuda.shared.array(TPB, numba.float32)
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         local_i = cuda.threadIdx.x
-        batch = cuda.blockIdx.y
-        # FILL ME IN (roughly 12 lines)
+        if local_i < size:
+            batch = cuda.blockIdx.y
+            cache[local_i] = a[batch, local_i]
+            cuda.syncthreads()
+            # FILL ME IN (roughly 12 lines)
+            output = 0
+            for j in range(size):
+                output += cache[j]
+            out[batch, 0] = output
 
     return call
 
@@ -1003,15 +1063,8 @@ problem.show()
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [[0.]
-     [0.]
-     [0.]
-     [0.]]
-    Spec : [[ 15.]
-     [ 51.]
-     [ 87.]
-     [123.]]
+    Passed Tests!
+    <dog_gif>
 
 
 ## Puzzle 14 - Matrix Multiply!
@@ -1038,11 +1091,33 @@ def mm_oneblock_test(cuda):
     def call(out, a, b, size: int) -> None:
         a_shared = cuda.shared.array((TPB, TPB), numba.float32)
         b_shared = cuda.shared.array((TPB, TPB), numba.float32)
-
+        
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         j = cuda.blockIdx.y * cuda.blockDim.y + cuda.threadIdx.y
         local_i = cuda.threadIdx.x
         local_j = cuda.threadIdx.y
+        num_loops = size//TPB
+        if size % TPB > 0:
+            num_loops +=1
+            
+        block_x = cuda.blockIdx.x
+        block_y = cuda.blockIdx.y
+        output = 0
+        for k in range(num_loops):
+            if (k*TPB+local_j) < size and i < size:
+                a_shared[local_i, local_j] = a[i, k*TPB+local_j]
+            if (k*TPB+local_i) < size and j < size:
+                b_shared[local_i, local_j] = b[k*TPB+local_i, j]
+        
+            
+            cuda.syncthreads()
+            
+            for mul_idx in range(TPB):
+                if (k*TPB+mul_idx) >= size:
+                    continue
+                output += a_shared[local_i, mul_idx]*b_shared[mul_idx, local_j]
+        if i < size and j < size:
+            out[i,j] = output
         # FILL ME IN (roughly 14 lines)
 
     return call
@@ -1068,10 +1143,10 @@ problem.show(sparse=True)
 ```
 
     # Matmul (Simple)
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
+ 
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             2 |             1 |             4 |             2 | 
     
 
 
@@ -1089,11 +1164,8 @@ problem.show(sparse=True)
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [[0. 0.]
-     [0. 0.]]
-    Spec : [[ 1  3]
-     [ 3 13]]
+    Passed Tests!
+    <dog_gif>
 
 
 Test 2
@@ -1119,12 +1191,10 @@ problem.show(sparse=True)
 ```
 
     # Matmul (Full)
-     
-       Score (Max Per Thread):
-       |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
-       |             0 |             0 |             0 |             0 | 
     
-
+        Score (Max Per Thread):
+        |  Global Reads | Global Writes |  Shared Reads | Shared Writes |
+        |             6 |             1 |            16 |             6 | 
 
 
 
@@ -1140,21 +1210,6 @@ problem.show(sparse=True)
 problem.check()
 ```
 
-    Failed Tests.
-    Yours: [[0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0.]
-     [0. 0. 0. 0. 0. 0. 0. 0.]]
-    Spec : [[  140   364   588   812  1036  1260  1484  1708]
-     [  364  1100  1836  2572  3308  4044  4780  5516]
-     [  588  1836  3084  4332  5580  6828  8076  9324]
-     [  812  2572  4332  6092  7852  9612 11372 13132]
-     [ 1036  3308  5580  7852 10124 12396 14668 16940]
-     [ 1260  4044  6828  9612 12396 15180 17964 20748]
-     [ 1484  4780  8076 11372 14668 17964 21260 24556]
-     [ 1708  5516  9324 13132 16940 20748 24556 28364]]
+    Passed Tests!
+    <dog_gif>
 
