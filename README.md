@@ -1,8 +1,11 @@
+# GPU Puzzles Answers
+- by [Sasha Rush](http://rush-nlp.com) - [srush_nlp](https://twitter.com/srush_nlp)
+
 # What is this repo?
 This is basically the answers to the wonderful GPU Puzzlers repo by Sasha Rush above, all credit goes to him. The reason this repo was created was mainly because in Eleuther AI we were given this repo as an introduction to triton and I had a lot of fun going through it.
 
-# GPU Puzzles
-- by [Sasha Rush](http://rush-nlp.com) - [srush_nlp](https://twitter.com/srush_nlp)
+TODO:
+ - Update svgs
 
 ![](https://github.com/srush/GPU-Puzzles/raw/main/cuda.png)
 
